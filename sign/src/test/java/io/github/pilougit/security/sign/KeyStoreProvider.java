@@ -1,0 +1,33 @@
+
+package io.github.pilougit.security.sign;
+import io.github.pilougit.security.sign.service.SignService;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateException;
+
+@Configuration
+public class KeyStoreProvider {
+    private static final String BC_PROVIDER = "BC";
+    @Bean
+    SignService myService() {
+        return new SignService();
+    }
+    @Bean
+    public KeyStore getKeyStore() throws KeyStoreException, NoSuchProviderException, IOException, CertificateException, NoSuchAlgorithmException {
+        Security.addProvider(new BouncyCastleProvider());
+        String type="PKCS12";
+        String filename="/home/pilou/PilouSign/PilouSign/keystore.pfx";
+        String password="pilou";
+
+        KeyStore sslKeyStore = KeyStore.getInstance(type, BC_PROVIDER);
+        sslKeyStore.load(new FileInputStream(filename), password.toCharArray());
+        return sslKeyStore;
+
+    }
+}
